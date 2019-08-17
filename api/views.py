@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class EnvironmentGetDayAPIView(views.APIView):
 
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
 
