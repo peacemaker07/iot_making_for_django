@@ -1,1 +1,1 @@
-web: gunicorn iot_making.wsgi_heroku --log-file -
+web: gunicorn iot_making.wsgi --log-file -
