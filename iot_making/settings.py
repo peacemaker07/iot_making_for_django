@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import iot_making.secret as secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,14 +19,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secret.SECRET_KEY
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -123,16 +118,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# auth0
-AUTH0_DOMAIN = secret.AUTH0_DOMAIN
-AUTH0_CLIENT_ID = secret.AUTH0_CLIENT_ID
-AUTH0_CLIENT_SECRET = secret.AUTH0_CLIENT_SECRET
-API_AUDIENCE = secret.API_AUDIENCE
-
-# aws
-API_GATEWAY_URL = secret.API_GATEWAY_URL
-API_GATEWAY_STAGE = 'dev'
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -186,3 +171,46 @@ LOGGING = {
         }
     }
 }
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
+
+if DEBUG:
+
+    import iot_making.secret as secret
+
+    # SECURITY WARNING: keep the secret key used in production secret!
+    SECRET_KEY = secret.SECRET_KEY
+
+    # auth0
+    AUTH0_DOMAIN = secret.AUTH0_DOMAIN
+    AUTH0_CLIENT_ID = secret.AUTH0_CLIENT_ID
+    AUTH0_CLIENT_SECRET = secret.AUTH0_CLIENT_SECRET
+    API_AUDIENCE = secret.API_AUDIENCE
+
+    # aws
+    API_GATEWAY_URL = secret.API_GATEWAY_URL
+    API_GATEWAY_STAGE = 'dev'
+
+else:
+
+    # heroku
+    import django_heroku
+    django_heroku.settings(locals())
+
+    # https://stackoverflow.com/questions/52311724/500-error-when-debug-false-with-heroku-and-django
+    DEBUG_PROPAGATE_EXCEPTIONS = True
+
+    SECRET_KEY = os.environ.get('SECRET_KEY', '')
+
+    # auth0
+    AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN', '')
+    AUTH0_CLIENT_ID = os.environ.get('AUTH0_CLIENT_ID', '')
+    AUTH0_CLIENT_SECRET = os.environ.get('AUTH0_CLIENT_SECRET', '')
+    API_AUDIENCE = os.environ.get('API_AUDIENCE', '')
+
+    # aws
+    API_GATEWAY_URL = os.environ.get('API_GATEWAY_URL', '')
+    API_GATEWAY_STAGE = 'dev'
