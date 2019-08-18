@@ -79,14 +79,14 @@ $.DataTBL.iotMakingDatalist = {
                     async: false
                 })
                 // サーバから取得したデータを加工します。
-                // .pipe(function(json) {
-                //     // console.log("success");
-                //     var params = {'json': json};
-                //     var hvfChart = new HvfChart(params);
-                //     hvfChart.setChart();
-                //     $('#js-logger-datas').val(JSON.stringify(json));
-                //     return json;
-                // })
+                .pipe(function(json) {
+                    // console.log("success");
+                    const params = {'json': json};
+                    const ioTMakingChart = new IoTMakingChart(params);
+                    ioTMakingChart.setChart();
+
+                    return json;
+                })
                 // 加工したデータをDataTablesのコールバック関数へ流します。
                 .done(fnCallback)
                 .fail(function (data) {
@@ -98,7 +98,139 @@ $.DataTBL.iotMakingDatalist = {
 
 };
 
-var webCommons = {
+const IoTMakingChart = function(params){
+    this.json = params.json;
+    if(!params.interval) {
+        this.interval = 2;
+    } else {
+        this.interval = params.interval;
+    }
+};
+IoTMakingChart.prototype = {
+
+    setChart: function(){
+        const self = this;
+        const labels = [];
+        const dataTemp = [];
+        const dataHumi = [];
+        const dataLux = [];
+        const dataLoudness = [];
+        const dataAirQuality = [];
+
+        for(let max = self.json.length, idx = 0; idx < max; idx++){
+            // if((idx % self.interval) === 0) {
+                labels.push(self.json[idx]['send_time'].substr(11, 5));
+
+                self.pushData(dataTemp, self.json[idx]['temp']);
+                self.pushData(dataHumi, self.json[idx]['humi']);
+                self.pushData(dataLux, self.json[idx]['lux']);
+                self.pushData(dataLoudness, self.json[idx]['loudness']);
+                self.pushData(dataAirQuality, self.json[idx]['air_quality']);
+            // }
+        }
+
+        // グラフと日付変更
+        const $graphTitleDate = $('.card-title.js-range-date');
+        let startDateList = '';
+        let endDateList = '';
+        let strRangeDate = '';
+        try{
+            startDateList = self.json[0]['send_time'].split('T');
+            endDateList = self.json[self.json.length-1]['send_time'].split('T');
+            strRangeDate = startDateList[0] + ' ' + startDateList[1].substr(0, 5) + ' 〜 ' + endDateList[0] + ' ' + endDateList[1].substr(0, 5);
+        } catch (e) {
+            console.log(e)
+        }
+        $graphTitleDate.each(function(idx, element){
+            $(element).text(strRangeDate);
+        });
+
+        const ctxDht = document.getElementById("id-chart1").getContext('2d');
+        ctxDht.canvas.height = 25;
+        const chartDht = new Chart(ctxDht, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '温度',
+                        data: dataTemp,
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '湿度',
+                        data: dataHumi,
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        borderColor: 'rgba(2, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '空気の品質',
+                        data: dataAirQuality,
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        borderColor: 'rgba(255, 200, 132, 1)',
+                        borderWidth: 1
+                    },
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+
+        const ctxLux = document.getElementById("id-chart2").getContext('2d');
+        ctxLux.canvas.height = 25;
+        const chartLux = new Chart(ctxLux, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: '明るさ',
+                        data: dataLux,
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        borderColor: 'rgba(200, 50, 200, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '音の大きさ',
+                        data: dataLoudness,
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
+                        borderColor: 'rgba(0, 132, 70, 1)',
+                        borderWidth: 1
+                    },
+                ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    },
+
+    pushData: function(dataList, val){
+        if(webCommons.dispRange(val)){
+            dataList.push(val);
+        } else {
+            dataList.push(null);
+        }
+    }
+};
+
+const webCommons = {
 
     dispRange: function(val) {
         return (val < 500 && val > -40);
@@ -144,6 +276,22 @@ var webCommons = {
         return true;
     },
 
+    setChartCanvas: function(){
+        $('#js-chart1').append('<canvas id="id-chart1" width="100%"></canvas>');
+        $('#js-chart2').append('<canvas id="id-chart2" width="100%"></canvas>');
+    },
+
+    clearGraph: function(){
+        $('#id-chart1').remove();
+        $('#id-chart2').remove();
+    },
+
+    clearTableAndGraph: function(dataTable){
+        dataTable.destroy();
+        $('.js-iot-making-data-list tbody').empty();
+        webCommons.clearGraph();
+    },
+
     getStrDate: function(targetDate){
 
         const y = targetDate.getFullYear();
@@ -153,12 +301,6 @@ var webCommons = {
         d = ('0' + d).slice(-2);
 
         return y + '-' + m + '-' + d;
-    },
-
-    clearTableAndGraph: function(dataTable){
-        dataTable.destroy();
-        $('.js-iot-making-data-list tbody').empty();
-        // webCommons.clearGraph();
     },
 
     getUrlVars: function getUrlVars(){

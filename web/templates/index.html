@@ -42,21 +42,23 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-6" style="margin-top: 10px;">
+        <div class="col-sm-12" style="margin-top: 10px;">
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title js-range-date"></h6>
-                    <div id="js-hvf-chart-lux">
+                    <div id="js-chart1">
                         {# ここにChartのcanvasを挿入 #}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6" style="margin-top: 10px;">
+    </div>
+    <div class="row">
+        <div class="col-sm-12" style="margin-top: 10px;">
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title js-range-date"></h6>
-                    <div id="js-dht-chart">
+                    <div id="js-chart2">
                         {# ここにChartのcanvasを挿入 #}
                     </div>
                 </div>
@@ -117,6 +119,7 @@
             $targetDay.setTargetDay(new Date());
 
             // 作成
+            webCommons.setChartCanvas();
             const iotDevicesUrl = "{% url 'api:iot_devices' %}";
             webCommons.createDeviceDropdownMenu(iotDevicesUrl, deviceId);
             let dataTable = $.DataTBL.iotMakingDatalist.activate(getTargetDayUrl(deviceId, day));
@@ -129,6 +132,7 @@
                 }
 
                 webCommons.clearTableAndGraph(dataTable);
+                webCommons.setChartCanvas();
                 dataTable = $.DataTBL.iotMakingDatalist.activate(getTargetDayUrl(deviceId, webCommons.getStrDate(targetDay)));
                 return false;
             });
