@@ -1,0 +1,28 @@
+.container {
+    max-width: 100% !important;
+}
+
+th {
+    text-align: center !important;
+}
+
+td.center {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.card-body {
+    padding: 0.5rem !important;
+}
+
+ul.errorlist {
+    color: red;
+}
+
+.hasDatepicker {
+    text-align: center;
+}
+
+label {
+    margin-bottom: initial;
+}

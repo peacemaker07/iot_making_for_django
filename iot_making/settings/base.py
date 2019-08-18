@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'iot_making_auth.apps.IotMakingAuthConfig',
     'api.apps.ApiConfig',
+    'web.apps.WebConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,7 +53,10 @@ ROOT_URLCONF = 'iot_making.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'common/templates'),
+            os.path.join(BASE_DIR, 'web/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

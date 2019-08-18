@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/web.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-4" style="margin-top: 10px;">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="dropdown">
+                        <button type="button"
+                        class="btn btn-info btn-sm dropdown-toggle js-device_id-dropdown"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        style="width: 90%">
+                        -
+                        </button>
+                        <div class="dropdown-menu js-device_id-dropdown-menu" aria-labelledby="dropdown1">
+                            <a class="dropdown-item js-device_id-dropdown-item" data-device_id="" href="#">-</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4" style="margin-top: 10px;">
+            <div class="card text-center">
+                <div class="card-body">
+                    <form action="" method="get" autocomplete="off">
+                        <label for="id_target_day">
+                            TARGET DAY: <input type="text" name="target_day" id="id_target_day" style="width: 120px;">
+                        </label>
+                        <input type="button" class="btn btn-outline-primary btn-sm js-target-day" value="更新" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6" style="margin-top: 10px;">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title js-range-date"></h6>
+                    <div id="js-hvf-chart-lux">
+                        {# ここにChartのcanvasを挿入 #}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" style="margin-top: 10px;">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title js-range-date"></h6>
+                    <div id="js-dht-chart">
+                        {# ここにChartのcanvasを挿入 #}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 10px;">
+        <div class="card-body">
+            {# <h6 class="card-title js-range-date"></h6> #}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover js-iot-making-data-list dataTable" width="100%">
+                    <thead>
+                        <tr>
+                            <th>送信日</th>
+                            <th>温度</th>
+                            <th>湿度</th>
+                            <th>明るさ</th>
+                            <th>音の大きさ</th>
+                            <th>空気の品質</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
+
+    <script src="{% static 'js/web.js' %}"></script>
+
+    <script type="text/javascript">
+        $(function() {
+
+            let queryString = webCommons.getUrlVars();
+            let deviceId = '001';
+            let day = webCommons.getStrDate(new Date());
+            if (queryString && (Object.keys(queryString).indexOf('device_id') >= 0)){
+                deviceId = queryString['device_id'];
+            }
+
+            // 各datepicker
+            let $targetDay = $("#id_target_day");
+            $targetDay.datepicker({
+                dateFormat: 'yy-mm-dd',
+                maxDate: new Date(),
+            });
+            $targetDay.setTargetDay = function(setDay){
+                this.datepicker('setDate', setDay);
+            };
+            $targetDay.setTargetDay(new Date());
+
+            // 作成
+            const iotDevicesUrl = "{% url 'api:iot_devices' %}";
+            webCommons.createDeviceDropdownMenu(iotDevicesUrl, deviceId);
+            let dataTable = $.DataTBL.iotMakingDatalist.activate(getTargetDayUrl(deviceId, day));
+
+            $('.js-target-day').on('click', function(e){
+
+                const targetDay = $targetDay.datepicker('getDate');
+                if(!webCommons.isValidDate(targetDay)){
+                    return false;
+                }
+
+                webCommons.clearTableAndGraph(dataTable);
+                dataTable = $.DataTBL.iotMakingDatalist.activate(getTargetDayUrl(deviceId, webCommons.getStrDate(targetDay)));
+                return false;
+            });
+
+            $('.js-device_id-dropdown-item').on('click', function(){
+                // device_idをドロップダウンで選択したらクエリストリングにそのdevice_idを追加
+                const choiceDeviceId = $(this).data('device_id');
+                queryString = webCommons.getUrlVars();
+                if(queryString){
+                    delete queryString['device_id'];
+                }
+                const searchParam = webCommons.getQueryString(queryString, false);
+
+                window.location.search = searchParam ? searchParam + '&device_id=' + choiceDeviceId : 'device_id=' + choiceDeviceId;
+                // window.location.reload();
+            });
+        });
+
+        function getTargetDayUrl(targetDeviceId, targetDay){
+            return "{% url 'api:environment_day' %}?device_id=" + targetDeviceId + "&day=" + targetDay;
+        }
+    </script>
+
+{% endblock %}
