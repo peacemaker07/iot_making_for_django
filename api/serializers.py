@@ -24,7 +24,7 @@ class EnvironmentSerializer(serializers.Serializer):
         return data.get('temp')
 
     def get_device_id(self, data):
-        return data.get('imsi')
+        return data.get('device_id')
 
     def get_humi(self, data):
         return data.get('humi')
@@ -54,7 +54,7 @@ class IoTDeviceSerializer(serializers.Serializer):
     name = serializers.SerializerMethodField()
 
     def get_device_id(self, data):
-        return data.get('imsi')
+        return data.get('device_id')
 
     def get_name(self, data):
         return data.get('name')
