@@ -27,6 +27,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'iot_making_auth.apps.IotMakingAuthConfig',
+    'account.apps.AccountConfig',
     'api.apps.ApiConfig',
     'web.apps.WebConfig',
     'django.contrib.admin',
@@ -54,6 +55,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            os.path.join(BASE_DIR, 'account/templates'),
             os.path.join(BASE_DIR, 'common/templates'),
             os.path.join(BASE_DIR, 'web/templates'),
         ],
@@ -123,6 +125,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+# ログイン後にwebにリダイレクト
+LOGIN_REDIRECT_URL = '/web'
+LOGIN_URL = '/accounts/login'
 
 LOGGING = {
     'version': 1,
