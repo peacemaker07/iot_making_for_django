@@ -12,7 +12,7 @@ class CommAws:
 
     base_url = f'{settings.API_GATEWAY_URL}/{settings.API_GATEWAY_STAGE}'
 
-    def req_day(self, imsi, target_date):
+    def req_day(self, device_id, target_date):
 
         target_date_str = target_date.strftime('%Y-%m-%d')
         datetime_from = datetime.strptime(target_date_str + ' 00:00:00', '%Y-%m-%d %H:%M:%S')
@@ -21,7 +21,7 @@ class CommAws:
         unix_time_from = UnixTime.date_time2unix_time(datetime_from)
         unix_time_to = UnixTime.date_time2unix_time(datetime_to)
 
-        payload = {'imsi': imsi, 'from': unix_time_from, 'to': unix_time_to}
+        payload = {'imsi': device_id, 'from': unix_time_from, 'to': unix_time_to}
         res = self.request_get(self.base_url + '/range', payload)
 
         return res

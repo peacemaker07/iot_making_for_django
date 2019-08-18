@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class EnvironmentGetDayAPIView(views.APIView):
 
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
 
@@ -23,10 +23,10 @@ class EnvironmentGetDayAPIView(views.APIView):
             logger.debug("is_valid")
             return Response(status=status.HTTP_400_BAD_REQUEST, data=[])
 
-        imsi = request_serializer.validated_data.get('imsi')
+        device_id = request_serializer.validated_data.get('device_id')
         day = request_serializer.validated_data.get('day')
         comm_aws = CommAws()
-        res = comm_aws.req_day(imsi, day)
+        res = comm_aws.req_day(device_id, day)
         if not res.ok:
             logger.error(res.json())
             return Response(status=status.HTTP_404_NOT_FOUND, data=[])
