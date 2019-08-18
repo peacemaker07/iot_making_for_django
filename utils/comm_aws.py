@@ -22,9 +22,11 @@ class CommAws:
         unix_time_to = UnixTime.date_time2unix_time(datetime_to)
 
         payload = {'imsi': device_id, 'from': unix_time_from, 'to': unix_time_to}
-        res = self.request_get(self.base_url + '/range', payload)
+        return self.request_get(self.base_url + '/environment/range', payload)
 
-        return res
+    def req_iot_devices(self):
+
+        return self.request_get(self.base_url + '/iot_devices', {})
 
     def request_get(self, url, payload):
 

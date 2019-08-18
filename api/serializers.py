@@ -46,3 +46,15 @@ class EnvironmentSerializer(serializers.Serializer):
 
     def get_lux(self, data):
         return data.get('lux')
+
+
+class IoTDeviceSerializer(serializers.Serializer):
+
+    device_id = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+
+    def get_device_id(self, data):
+        return data.get('imsi')
+
+    def get_name(self, data):
+        return data.get('name')
