@@ -233,7 +233,7 @@ IoTMakingChart.prototype = {
 const webCommons = {
 
     dispRange: function(val) {
-        return (val < 800 && val > -40);
+        return (val < 1500 && val > -40);
     },
 
     createDeviceDropdownMenu: function(url, targetDeviceId){
