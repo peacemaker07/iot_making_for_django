@@ -8,10 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: set env
-      run: |
-      env:
-        SECRET_KEY: aaa
     - uses: actions/checkout@v2
     - name: Set up Python 3.6
       uses: actions/setup-python@v1
