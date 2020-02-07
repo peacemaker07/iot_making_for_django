@@ -1,0 +1,15 @@
+from .base import *
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'test'
+
+# auth0
+AUTH0_DOMAIN = 'AUTH0_DOMAIN'
+AUTH0_CLIENT_ID = 'AUTH0_CLIENT_ID'
+AUTH0_CLIENT_SECRET = 'AUTH0_CLIENT_SECRET'
+API_AUDIENCE = 'API_AUDIENCE'
+
+# aws
+API_GATEWAY_URL = 'API_GATEWAY_URL'
+API_GATEWAY_STAGE = 'dev'
