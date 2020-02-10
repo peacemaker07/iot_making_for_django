@@ -35,12 +35,12 @@ jobs:
 
     steps:
     - name: deploy test
+      if: startsWith(github.branch, 'develop')
       env:
         AWS_ACCESS_KEY_ID: aaa
         AWS_SECRET_ACCESS_KEY: bbb
       run: |
         echo %PATH%
-        echo ${github.branch}
         echo ${AWS_ACCESS_KEY_ID}
         echo "deploy"
       shell: bash
