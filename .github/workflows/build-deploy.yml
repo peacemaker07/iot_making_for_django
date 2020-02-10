@@ -1,4 +1,4 @@
-name: Python application
+name: Build and Deploy to heroku
 
 on: [push]
 
@@ -28,3 +28,12 @@ jobs:
     - name: Test with test
       run: |
         python manage.py test
+
+  deploy:
+
+    steps:
+      - name: deploy test
+        run: |
+          echo %PATH%
+          echo "deploy"
+        shell: bash
