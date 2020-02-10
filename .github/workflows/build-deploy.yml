@@ -36,7 +36,7 @@ jobs:
 
     steps:
     - name: deploy test
-      if: startsWith(github.branch, 'feature/add-github-actions')
+      if: startsWith(github.branch, 'origin/feature/add-github-actions')
       env:
         AWS_ACCESS_KEY_ID: aaa
         AWS_SECRET_ACCESS_KEY: bbb
