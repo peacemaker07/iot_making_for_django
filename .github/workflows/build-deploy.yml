@@ -33,6 +33,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    steps:
     - name: deploy test
       env:
         AWS_ACCESS_KEY_ID: aaa
