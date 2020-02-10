@@ -36,12 +36,12 @@ jobs:
 
     steps:
     - name: deploy test
-      if: startsWith(github.branch, 'origin/feature/add-github-actions')
+      # if: startsWith(github.branch, 'origin/feature/')
       env:
         AWS_ACCESS_KEY_ID: aaa
         AWS_SECRET_ACCESS_KEY: bbb
       run: |
         echo %PATH%
         echo ${AWS_ACCESS_KEY_ID}
-        echo "deploy"
+        echo ${{github.ref}}
       shell: bash
