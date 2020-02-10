@@ -35,7 +35,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: bbb
       run: |
         echo %PATH%
-        echo ${ github.branch }
+        echo github.branch
         echo ${ AWS_ACCESS_KEY_ID }
         echo "deploy"
       shell: bash
