@@ -32,5 +32,6 @@ jobs:
     - name: deploy test
       run: |
         echo %PATH%
+        echo ${{ github.branch }}
         echo "deploy"
       shell: bash
