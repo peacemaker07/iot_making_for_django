@@ -31,16 +31,39 @@ jobs:
 
   deploy:
 
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: deploy test
+    - name: deploy test feature
+      if: startsWith(github.ref, 'refs/heads/feature/')
       env:
         AWS_ACCESS_KEY_ID: aaa
         AWS_SECRET_ACCESS_KEY: bbb
       run: |
         echo %PATH%
-        echo ${github.branch}
         echo ${AWS_ACCESS_KEY_ID}
-        echo "deploy"
+        echo ${{github.ref}}
+      shell: bash
+
+    - name: deploy test develop
+      if: startsWith(github.ref, 'refs/heads/develop')
+      env:
+        AWS_ACCESS_KEY_ID: aaa
+        AWS_SECRET_ACCESS_KEY: bbb
+      run: |
+        echo %PATH%
+        echo ${AWS_ACCESS_KEY_ID}
+        echo ${{github.ref}}
+      shell: bash
+
+    - name: deploy test master
+      if: startsWith(github.ref, 'refs/heads/master')
+      env:
+        AWS_ACCESS_KEY_ID: aaa
+        AWS_SECRET_ACCESS_KEY: bbb
+      run: |
+        echo %PATH%
+        echo ${AWS_ACCESS_KEY_ID}
+        echo ${{github.ref}}
       shell: bash
